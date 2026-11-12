@@ -1,0 +1,13 @@
+RUNNERSHUB V5 - NETLIFY KURULUM
+
+1) ZIP dosyasını GitHub deposuna çıkararak yükleyin (index.html, admin.html, assets/, netlify/, package.json, netlify.toml, seed.json).
+2) Netlify üzerinden GitHub deposunu bağlayın. Sadece sürükle-bırak statik deploy bu sürümde YETERLİ DEĞİLDİR: sunucu fonksiyonları ve Blobs gerekiyor.
+3) Netlify Site configuration > Environment variables bölümünde iki değişken tanımlayın:
+   ADMIN_PASSWORD = hubrunners
+   ADMIN_SESSION_SECRET = uzun ve rastgele, en az 32 karakterlik gizli anahtar
+4) Deploy'u yeniden çalıştırın. Site: / ; admin: /admin.html
+5) Admin kullanıcı adı: runnershub. Şifre Netlify ortam değişkeninde saklanır; kodun içine konmaz.
+6) Yeni ürün ekle: Admin > Yeni ürün ekle > fotoğrafın herkese açık HTTPS URL'si, isim, kod, fiyat, stok ve renkleri yaz > Tüm değişiklikleri yayınla.
+7) Yorumlar için gerçek müşteri izni alın. Örnek yorumlar kaldırıldı.
+8) Netlify Blobs veri saklama kullanılır. Verileri ayrıca düzenli yedeklemeniz önerilir.
+9) Ürün fotoğrafını cihazdan yüklemek yerine HTTPS URL girilir. Netlify Functions/Blobs için uygun plan ve dağıtım gerekir.
