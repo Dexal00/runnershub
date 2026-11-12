@@ -101,18 +101,19 @@ function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&l
 function renderReviews(reviews){document.querySelector('.reviews-grid').innerHTML=reviews.length?reviews.map(r=>`<article class="review-card"><div class="stars">${'★'.repeat(Math.max(1,Math.min(5,Number(r.stars)||5)))}</div><p>“${esc(r.text)}”</p><small>${esc(r.name)}</small></article>`).join(''):'<p class="empty">Henüz yayınlanmış müşteri yorumu bulunmuyor.</p>';}
 let heroTimer=null;
 function rotateHero(){
- const slides=products.filter(p=>p.image && Number(p.stock)>0).slice(0,4);
+ const configured=Array.isArray(window.rhHero?.slides)?window.rhHero.slides.filter(x=>x&&x.image):[];
+ const slides=configured.length?configured:products.filter(p=>p.image&&Number(p.stock)>0).slice(0,4).map(p=>({image:p.image,name:p.name}));
  if(heroTimer){clearInterval(heroTimer);heroTimer=null;}
  if(!slides.length)return;
- let i=0;
- const img=document.getElementById('heroSlide');const tag=document.getElementById('heroProductName');
- function show(){const item=slides[i];i=(i+1)%slides.length;const preload=new Image();preload.onload=()=>{img.classList.add('fade');setTimeout(()=>{img.src=item.image;img.alt=item.name;tag.textContent=item.name;img.classList.remove('fade');},280)};preload.onerror=()=>{tag.textContent=item.name};preload.src=item.image;}
- show();if(slides.length>1)heroTimer=setInterval(show,4000);
+ let i=0;const img=document.getElementById('heroSlide'),tag=document.getElementById('heroProductName');
+ function show(){const item=slides[i];i=(i+1)%slides.length;const preload=new Image();preload.onload=()=>{img.classList.add('fade');setTimeout(()=>{img.src=item.image;img.alt=item.name||'RunnersHub';tag.textContent=item.name||'RUNNERSHUB';img.classList.remove('fade');},280)};preload.onerror=()=>{img.classList.remove('fade')};preload.src=item.image;}
+ show();if(slides.length>1)heroTimer=setInterval(show,Math.max(2000,Math.min(20000,Number(window.rhHero?.interval)||4000)));
 }
 async function loadCatalog(){
  let data=starterCatalog;
  try{const r=await fetch('/.netlify/functions/catalog',{cache:'no-store'});if(r.ok){const remote=await r.json();if(Array.isArray(remote.products))data=remote;}}
  catch(e){console.info('Önizleme: örnek koleksiyon gösteriliyor. Canlı stok için Netlify Functions gereklidir.');}
+ window.rhHero=data.hero||{slides:[],interval:4000};
  products=(data.products||[]).map(p=>({...p,stock:Number(p.stock??0)}));
  renderReviews(data.reviews||[]);renderProducts();renderCart();rotateHero();
 }
